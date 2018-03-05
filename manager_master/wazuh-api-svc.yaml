@@ -1,0 +1,28 @@
+#######################################################################
+# Service to expose the Wazuh master manager API to the Kibana
+# application and to other EC2 instances inside the VPC
+#######################################################################
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wazuh  # Don't change, unless you update the Wazuh Kibana app config
+  namespace: wazuh
+  labels:
+    app: wazuh-manager
+    dns: route53
+  annotations:
+    domainName: 'wazuh-api.some-domain.com'  # TODO: Change this for a Hosted Zone you configured in AWS Route 53
+    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: ssl
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'put_your_aws_acm_certificate_arn_here'
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: '55000'
+spec:
+  type: LoadBalancer
+  selector:
+    app: wazuh-manager
+    wazuh-manager-role: master
+  ports:
+    - name: wazuh-api
+      port: 55000
+      targetPort: 55000

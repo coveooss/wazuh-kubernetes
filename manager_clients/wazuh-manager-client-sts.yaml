@@ -1,0 +1,81 @@
+#######################################################################
+# StatefulSet for Wazuh manager clients nodes
+#
+# We deploy two replicas here and we set a Pod anti-affinity policy to
+# make sure the master and clients are not all running on the same
+# Kubernetes node.
+#
+# To scale up this deployment, you must update the master ossec.conf
+# first to tel the master another node will be part of the cluster.
+#######################################################################
+
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: wazuh-manager-client
+  namespace: wazuh
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wazuh-manager
+      wazuh-manager-role: client
+  serviceName: wazuh-client
+  template:
+    metadata:
+      labels:
+        app: wazuh-manager
+        wazuh-manager-role: client
+      name: wazuh-manager-client
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: wazuh-manager-role
+                      operator: In
+                      values:
+                        - master
+                topologyKey: kubernetes.io/hostname
+      volumes:
+        - name: config
+          configMap:
+            name: wazuh-manager-client-conf
+      containers:
+        - name: wazuh-manager
+          image: 'wazuh/wazuh:3.2.0_6.2.1'
+          resources:
+            limits:
+              cpu: 200m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: config
+              mountPath: /var/ossec/etc-template/ossec.conf
+              subPath: ossec.conf
+              readOnly: true
+            - name: wazuh-manager-client
+              mountPath: /var/ossec/data
+            - name: wazuh-manager-client
+              mountPath: /etc/postfix
+          ports:
+            - containerPort: 1514
+            - containerPort: 1515
+            - containerPort: 1516
+            - containerPort: 55000
+  volumeClaimTemplates:
+    - metadata:
+        name: wazuh-manager-client
+        namespace: wazuh
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: gp2-encrypted-retained
+        resources:
+          requests:
+            storage: 10Gi

@@ -1,0 +1,40 @@
+#######################################################################
+# Deployment for Wazuh Logstash container
+#######################################################################
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: wazuh-logstash
+  namespace: wazuh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wazuh-logstash
+  template:
+    metadata:
+      labels:
+        app: wazuh-logstash
+      name: wazuh-logstash
+    spec:
+      containers:
+        - name: wazuh-logstash
+          image: 'wazuh/wazuh-logstash:3.2.0_6.2.1'
+          resources:
+            limits:
+              cpu: 1
+              memory: 2Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          args:
+            - '-f'
+            - /etc/logstash/conf.d/
+          env:
+            - name: LS_HEAP_SIZE
+              value: 2048m
+            - name: XPACK_MONITORING_ENABLED
+              value: 'false'
+          ports:
+            - containerPort: 5000

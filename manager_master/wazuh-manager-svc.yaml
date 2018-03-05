@@ -1,0 +1,31 @@
+#######################################################################
+# Service to expose Wazuh managers agents communication ports to other
+# EC2 instances in the VPC
+#
+# All managers (the master and clients) are behind that load balancer,
+# so agents are going to report to any manager they want, all that
+# without stickiness
+#######################################################################
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wazuh-manager
+  namespace: wazuh
+  labels:
+    app: wazuh-manager
+    dns: route53
+  annotations:
+    domainName: 'wazuh-manager.some-domain.com'  # TODO: Change this for a Hosted Zone you configured in AWS Route 53
+    service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
+spec:
+  type: LoadBalancer
+  selector:
+    app: wazuh-manager
+  ports:
+    - name: agents-events
+      port: 1514
+      targetPort: 1514
+    - name: agents-auth
+      port: 1515
+      targetPort: 1515

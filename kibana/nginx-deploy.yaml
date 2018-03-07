@@ -1,0 +1,38 @@
+#######################################################################
+# Kubernetes Deployment for Wazuh Kibana nginx proxy container
+#######################################################################
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: wazuh-nginx
+  namespace: wazuh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wazuh-nginx
+  template:
+    metadata:
+      labels:
+        app: wazuh-nginx
+      name: wazuh-nginx
+    spec:
+      containers:
+        - name: wazuh-nginx
+          image: 'wazuh/wazuh-nginx:latest'
+          resources:
+            limits:
+              cpu: 200m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 64Mi
+          command:
+            - /run.sh
+          env:
+            - name: NGINX_PORT
+              value: '443'
+          ports:
+            - containerPort: 80
+            - containerPort: 443

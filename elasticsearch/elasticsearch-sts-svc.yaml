@@ -1,0 +1,19 @@
+#######################################################################
+# Headless service for the wazuh-elasticsearch StatefulSet
+#######################################################################
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wazuh-elasticsearch
+  namespace: wazuh
+  labels:
+    app: wazuh-elasticsearch
+spec:
+  selector:
+    app: wazuh-elasticsearch
+  ports:
+    - name: es-nodes
+      port: 9300
+      targetPort: 9300
+  clusterIP: None

@@ -6,7 +6,7 @@ Wazuh best practices recommend to deploy multiple instances of the Wazuh manager
 * `Master` node - intended to expose the Wazuh API, manage agents registration
 * `Client` nodes - intended to receive agents events
 
-Based on that, we demonstrate that it's possible to deploy the Wazuh cluster in a Kubernetes cluster on top of AWS. Master and client nodes are all behind an internal AWS elastic load balancer, so the events from agents are all dispatched to every available nodes in the cluster. Kubernetes will ensure that the cluster stays highly available.
+Based on that, we demonstrate that it's possible to deploy the Wazuh cluster in a Kubernetes cluster on top of AWS. Master and client nodes are all behind an internal AWS elastic load balancer, so the events from agents are dispatched to any available nodes in the cluster. Kubernetes will ensure that the cluster stays highly available.
 
 This repository is using Docker images from the [wazuh-docker](https://github.com/wazuh/wazuh-docker) repository. A simple `kompose convert -f docker-compose.yml` helped a lot to build this Kubernetes example!
 

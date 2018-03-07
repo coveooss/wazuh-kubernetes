@@ -1,5 +1,5 @@
 #######################################################################
-# Deployment for Wazuh Logstash container
+# Kubernetes Deployment for the Wazuh Logstash container
 #######################################################################
 
 apiVersion: apps/v1beta2

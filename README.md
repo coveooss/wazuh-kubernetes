@@ -2,19 +2,19 @@
 Wazuh (3.2) cluster on top of Kubernetes (tested with 1.8.6) with a working simple ELK stack.
 
 ## Abstract
-Wazuh best-practices recommend to deploy multiple instances of the Wazuh manager so the manager can support a larger amount of events and can be fault tolerant.
+Wazuh best practices recommend to deploy multiple instances of the Wazuh manager so it can support a larger amount of events and can be fault tolerant.
 * `Master` node - intended to expose the Wazuh API, manage agents registration
 * `Client` nodes - intended to receive agents events
 
-Based on that, we are demonstrating that it's possible to deploy the Wazuh cluster in a Kubernetes cluster on top of AWS. Master and client nodes are all behind an internal AWS elastic load balancer, so the events from agents are all dispatched to each nodes available in the cluster. Also, Kubernetes is assuring the cluster to stay up as much as possible.
+Based on that, we demonstrate that it's possible to deploy the Wazuh cluster in a Kubernetes cluster on top of AWS. Master and client nodes are all behind an internal AWS elastic load balancer, so the events from agents are all dispatched to every available nodes in the cluster. Kubernetes will ensure that the cluster stays highly available.
 
 This repository is using Docker images from the [wazuh-docker](https://github.com/wazuh/wazuh-docker) repository. A simple `kompose convert -f docker-compose.yml` helped a lot to build this Kubernetes example!
 
 ## Pre-requisites
-* Kubernetes cluster (tested with v1.8.6) on top of [AWS](https://aws.amazon.com/). [kops](https://github.com/kubernetes/kops) is a nice tool to deploy such cluster.
-* You should be able to create Persistent Volumes on top of AWS EBS when using a volumeClaimTemplates in a Kubernetes StatefulSet.
-* You should be able to create a record set in AWS Route 53 from a Kubernetes LoadBalancer.
-* ...
+* A Kubernetes cluster (tested with v1.8.6) on top of [AWS](https://aws.amazon.com/). The Kubernetes documentation is recommending [kops](https://kubernetes.io/docs/getting-started-guides/kops/) to install Kubernetes in AWS.
+  * You should be able to create Persistent Volumes on top of AWS EBS when using a volumeClaimTemplates in a Kubernetes StatefulSet.
+  * You should be able to create a record set in AWS Route 53 from a Kubernetes LoadBalancer.
+* Having more than one Kubernetes node, otherwise, Wazuh manager client nodes won't be able to boot due to the podAntiAffinity policy.
 
 ## Deploy
 First, you need to deploy Kubernetes YAML files in the [base](base) folder:
@@ -54,7 +54,7 @@ kubectl apply -f elasticsearch-svc.yaml
 popd
 ```
 
-Then, it's preferable you wait for the Elasticsearch Pod to be fully up and initialized before you deploy Kibana. The Kibana Pod will load Wazuh templates in the Elasticsearch Pod. You can deploy the Kibana Deployment from the [kibana](kibana) folder:
+Then, it's preferable you wait for the Elasticsearch Pod to be fully up and initialized before you deploy Kibana. The Kibana Pod will load Wazuh templates in the Elasticsearch installation. You can deploy the Kibana Kubernetes Deployment from the [kibana](kibana) folder:
 ```BASH
 pushd kibana
 kubectl apply -f kibana-deploy.yaml
@@ -64,7 +64,7 @@ kubectl apply -f nginx-svc.yaml
 popd
 ```
 
-Finally, you can deploy the Logstash Deployment from the [logstash](logstash) folder after Kibana successfully initialized Elasticsearch:
+Finally, you can deploy the Logstash Kubernetes Deployment from the [logstash](logstash) folder after Kibana successfully loaded Wazuh templates in the Elasticsearch installation:
 ```BASH
 pushd logstash
 kubectl apply -f logstash-deploy.yaml

@@ -1,5 +1,5 @@
 #######################################################################
-# Deployment for Wazuh Kibana container
+# Kubernetes Deployment for Wazuh Kibana container
 #######################################################################
 
 apiVersion: apps/v1beta2

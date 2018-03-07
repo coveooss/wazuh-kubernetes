@@ -1,5 +1,5 @@
 #######################################################################
-# StatefulSet for the Elasticsearch single node setup
+# Kubernetes StatefulSet for the Elasticsearch single node setup
 #
 # This is a simple Elasticsearch deployment. You should follow best
 # practices if ever you want to go in production with this setup.

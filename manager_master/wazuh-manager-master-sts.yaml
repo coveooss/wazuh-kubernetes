@@ -1,5 +1,5 @@
 #######################################################################
-# StatefulSet for the Wazuh manager master node
+# Kubernetes StatefulSet for the Wazuh manager master node
 #
 # We deploy only one replica here because Wazuh is not yet supporting
 # a multi-master setup

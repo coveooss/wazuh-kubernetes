@@ -26,6 +26,3 @@ spec:
     - name: agents-events
       port: 1514
       targetPort: 1514
-    - name: agents-auth
-      port: 1515
-      targetPort: 1515

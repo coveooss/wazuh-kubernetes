@@ -221,7 +221,7 @@ data:
         ossec-control enable auth
       -->
       <auth>
-        <disabled>no</disabled>
+        <disabled>yes</disabled>
         <port>1515</port>
         <use_source_ip>no</use_source_ip>
         <force_insert>no</force_insert>

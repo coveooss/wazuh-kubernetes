@@ -49,7 +49,6 @@ spec:
               mountPath: /etc/postfix
           ports:
             - containerPort: 1514
-            - containerPort: 1515
             - containerPort: 1516
             - containerPort: 55000
   volumeClaimTemplates:

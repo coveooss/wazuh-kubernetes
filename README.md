@@ -2,7 +2,7 @@
 Wazuh (3.2) cluster on top of Kubernetes (tested with 1.8.6) with a working simple ELK stack.
 
 ## Abstract
-Wazuh best practices recommends deploying multiple instances of the Wazuh manager so it can support a larger amount of events and can be fault tolerant.
+Wazuh best practices recommend deploying multiple instances of the Wazuh manager so it can support a larger amount of events and can be fault tolerant.
 * `Master` node - intended to expose the Wazuh API, manage agents registration
 * `Client` nodes - intended to receive agents events
 
@@ -80,7 +80,7 @@ Then, all the pieces should be up!
 * Kibana and the Wazuh Kibana application should be available at https://wazuh.some-domain.com:443
 
 ## Wazuh agents deployment
-This repository does not show how to deploy the Wazuh agent in a Kubernetes cluster. Normally, we would use a DaemonSet to deploy the agent on each Kubernetes node. To do that, we would need a Docker image with the Wazuh agent installed on it and then we would need to mount almost every folders of the host inside that container (`/bin`, `/etc`, `/var/log`, etc.). It would be a very complicated task since you cannot simply mount the `/bin` folder of you host in the `/bin` folder of your container. Therefore, creating such Docker image an using it in a Kubernetes DaemonSet is not the ideal way to deploy a Wazuh agent. Instead, you should take a look at the [Wazuh Ansible playbooks project](https://github.com/wazuh/wazuh-ansible) or at the [Wazuh Puppet module project](https://github.com/wazuh/wazuh-puppet) to deploy your Wazuh agents.
+This repository does not show how to deploy the Wazuh agent in a Kubernetes cluster. Normally, we would use a DaemonSet to deploy the agent on each Kubernetes node. To do that, we would need a Docker image with the Wazuh agent installed on it and then we would need to mount almost every folder of your host inside that container (`/bin`, `/etc`, `/var/log`, etc.). It would be a very complicated task since you cannot simply mount the `/bin` folder of your host in the `/bin` folder of your container. Therefore, creating such Docker image and using it in a Kubernetes DaemonSet is not the ideal way to deploy a Wazuh agent. Instead, you should take a look at the [Wazuh Ansible playbooks project](https://github.com/wazuh/wazuh-ansible) or at the [Wazuh Puppet module project](https://github.com/wazuh/wazuh-puppet) to deploy your Wazuh agents.
 
 ## TODO
 * Secure the Wazuh API.

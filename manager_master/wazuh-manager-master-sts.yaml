@@ -17,6 +17,7 @@ spec:
       app: wazuh-manager
       wazuh-manager-role: master
   serviceName: wazuh-master
+  podManagementPolicy: Parallel
   template:
     metadata:
       labels:
@@ -32,15 +33,15 @@ spec:
         - name: wazuh-manager
           image: 'wazuh/wazuh:3.2.0_6.2.1'
           resources:
-            limits:
-              cpu: 1
-              memory: 512Mi
             requests:
               cpu: 500m
               memory: 256Mi
+            limits:
+              cpu: 1
+              memory: 512Mi
           volumeMounts:
             - name: config
-              mountPath: /var/ossec/etc-template/ossec.conf
+              mountPath: /wazuh-config-mount/etc/ossec.conf
               subPath: ossec.conf
               readOnly: true
             - name: wazuh-manager-master

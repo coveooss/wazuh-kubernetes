@@ -22,18 +22,18 @@ spec:
         - name: wazuh-logstash
           image: 'wazuh/wazuh-logstash:3.2.0_6.2.1'
           resources:
-            limits:
-              cpu: 1
-              memory: 2Gi
             requests:
               cpu: 500m
               memory: 1Gi
+            limits:
+              cpu: 1
+              memory: 1.5Gi
           args:
             - '-f'
             - /etc/logstash/conf.d/
           env:
-            - name: LS_HEAP_SIZE
-              value: 2048m
+            - name: LS_JAVA_OPTS
+              value: '-Xmx1g -Xms512m'
             - name: XPACK_MONITORING_ENABLED
               value: 'false'
           ports:

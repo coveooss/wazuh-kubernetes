@@ -30,12 +30,12 @@ spec:
         - name: volume-mount-hack
           image: busybox
           resources:
-            limits:
-              cpu: 100m
-              memory: 256Mi
             requests:
               cpu: 50m
               memory: 128Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
           command:
             - sh
             - '-c'
@@ -47,12 +47,12 @@ spec:
         - name: wazuh-elasticsearch
           image: 'docker.elastic.co/elasticsearch/elasticsearch:6.2.2'
           resources:
-            limits:
-              cpu: 1
-              memory: 2Gi
             requests:
               cpu: 500m
               memory: 1Gi
+            limits:
+              cpu: 1
+              memory: 2Gi
           env:
             - name: ES_JAVA_OPTS
               value: '-Xms1024m -Xmx1024m'

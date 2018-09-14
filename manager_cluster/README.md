@@ -14,9 +14,15 @@ You should also set a valid AWS ACM certificate ARN in the [wazuh-api-svc.yaml](
 
 ## Deploy
 ```BASH
-kubectl apply -f wazuh-manager-master-conf.yaml
-kubectl apply -f wazuh-manager-master-sts-svc.yaml
-kubectl apply -f wazuh-manager-master-sts.yaml
 kubectl apply -f wazuh-api-svc.yaml
+kubectl apply -f wazuh-manager-cluster-sts-svc.yaml
 kubectl apply -f wazuh-manager-svc.yaml
+
+kubectl apply -f wazuh-manager-master-conf.yaml
+kubectl apply -f wazuh-manager-worker-0-conf.yaml
+kubectl apply -f wazuh-manager-worker-1-conf.yaml
+
+kubectl apply -f wazuh-manager-master-sts.yaml
+kubectl apply -f wazuh-manager-worker-0-sts.yaml
+kubectl apply -f wazuh-manager-worker-1-sts.yaml
 ```

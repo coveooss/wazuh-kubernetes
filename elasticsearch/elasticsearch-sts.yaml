@@ -45,7 +45,7 @@ spec:
               mountPath: /usr/share/elasticsearch/data
       containers:
         - name: wazuh-elasticsearch
-          image: 'docker.elastic.co/elasticsearch/elasticsearch:6.2.2'
+          image: 'docker.elastic.co/elasticsearch/elasticsearch:6.4.0'
           resources:
             requests:
               cpu: 500m

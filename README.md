@@ -1,5 +1,5 @@
 # wazuh-kubernetes
-Wazuh (3.2) cluster on top of Kubernetes (tested with v1.10.3) with a working simple ELK stack.
+Wazuh (3.6) cluster on top of Kubernetes (tested with v1.10.3) with a working simple ELK stack.
 
 ## Abstract
 Wazuh best practices recommend deploying multiple instances of the Wazuh manager so it can support a larger amount of events and can be fault tolerant.

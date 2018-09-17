@@ -64,16 +64,6 @@ spec:
               value: 0.0.0.0
             - name: node.name
               value: node-1
-            - name: xpack.graph.enabled
-              value: 'false'
-            - name: xpack.ml.enabled
-              value: 'false'
-            - name: xpack.monitoring.enabled
-              value: 'false'
-            - name: xpack.security.enabled
-              value: 'false'
-            - name: xpack.watcher.enabled
-              value: 'false'
           volumeMounts:
             - name: wazuh-elasticsearch
               mountPath: /usr/share/elasticsearch/data

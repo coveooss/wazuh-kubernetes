@@ -28,13 +28,8 @@ spec:
             limits:
               cpu: 1
               memory: 1.5Gi
-          args:
-            - '-f'
-            - /etc/logstash/conf.d/
           env:
             - name: LS_JAVA_OPTS
               value: '-Xmx1g -Xms512m'
-            - name: XPACK_MONITORING_ENABLED
-              value: 'false'
           ports:
             - containerPort: 5000

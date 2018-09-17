@@ -23,17 +23,16 @@ spec:
           image: 'wazuh/wazuh-kibana:3.6.1_6.4.0'
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
-            limits:
               cpu: 200m
               memory: 512Mi
+            limits:
+              cpu: 400m
+              memory: 1024Mi
           ports:
             - containerPort: 5601
               name: kibana
-          command:
-            - /wait-for-it.sh
-            - elasticsearch
           env:
+            - name: ELASTICSEARCH_URL
+              value: 'http://elasticsearch:9200'
             - name: NODE_OPTIONS
-              value: '--max-old-space-size=3072'
+              value: '--max-old-space-size=512'

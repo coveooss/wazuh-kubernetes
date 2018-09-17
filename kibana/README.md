@@ -10,8 +10,9 @@ You should also set a valid AWS ACM certificate ARN in the [nginx-svc.yaml](ngin
 
 ## Deploy
 ```BASH
-kubectl apply -f kibana-deploy.yaml
 kubectl apply -f kibana-svc.yaml
-kubectl apply -f nginx-deploy.yaml
 kubectl apply -f nginx-svc.yaml
+
+kubectl apply -f kibana-deploy.yaml
+kubectl apply -f nginx-deploy.yaml
 ```

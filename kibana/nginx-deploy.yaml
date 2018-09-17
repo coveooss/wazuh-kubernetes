@@ -28,8 +28,6 @@ spec:
             limits:
               cpu: 200m
               memory: 128Mi
-          command:
-            - /run.sh
           env:
             - name: NGINX_PORT
               value: '443'

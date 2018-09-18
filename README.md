@@ -1,76 +1,86 @@
 # wazuh-kubernetes
-Wazuh (3.2) cluster on top of Kubernetes (tested with 1.8.6) with a working simple ELK stack.
+Wazuh (3.6) cluster on top of Kubernetes (tested with v1.10.3) with a working simple ELK stack.
 
 ## Abstract
 Wazuh best practices recommend deploying multiple instances of the Wazuh manager so it can support a larger amount of events and can be fault tolerant.
 * `Master` node - intended to expose the Wazuh API, manage agents registration
-* `Client` nodes - intended to receive agents events
+* `Worker` nodes - intended to receive agents events
 
 You should take a quick look at [the Wazuh cluster documentation](https://documentation.wazuh.com/current/user-manual/manager/wazuh-cluster.html) before deploying what's in this repository.
 
-Based on that, we demonstrate that it's possible to deploy the Wazuh cluster in a Kubernetes cluster on top of AWS. Master and client nodes are all behind an internal AWS elastic load balancer, so the events from agents are dispatched to any available nodes in the cluster. Kubernetes will ensure that the cluster stays highly available.
+Based on that, we demonstrate that it's possible to deploy the Wazuh cluster in a Kubernetes cluster on top of AWS. Master and worker nodes are all behind an internal AWS elastic load balancer, so the events from agents are dispatched to any available nodes in the cluster. Kubernetes will ensure that the cluster stays highly available.
 
 This repository is using Docker images from the [wazuh-docker](https://github.com/wazuh/wazuh-docker) repository. A simple `kompose convert -f docker-compose.yml` helped a lot to build this Kubernetes example!
 
 ## Pre-requisites
-* A Kubernetes cluster (tested with v1.8.6) on top of [AWS](https://aws.amazon.com/). The Kubernetes documentation recommends [kops](https://kubernetes.io/docs/getting-started-guides/kops/) to install Kubernetes in AWS.
+* A Kubernetes cluster (tested with v1.10.3) on top of [AWS](https://aws.amazon.com/). Was tested in AWS EKS.
   * You should be able to create Persistent Volumes on top of AWS EBS when using a volumeClaimTemplates in a Kubernetes StatefulSet.
   * You should be able to create a record set in AWS Route 53 from a Kubernetes LoadBalancer.
-* Having more than one Kubernetes node, otherwise, Wazuh manager client nodes won't be able to boot due to the podAntiAffinity policy.
+* Having at least two Kubernetes node, otherwise, Wazuh manager worker nodes won't be able to boot due to the podAntiAffinity policy.
 
 ## Wazuh manager cluster deployment
 First, you need to deploy Kubernetes YAML files in the [base](base) folder:
 ```BASH
 pushd base
-kubectl apply -f wazuh-ns.yaml
+
 kubectl apply -f aws-gp2-storage-class.yaml
+kubectl apply -f wazuh-ns.yaml
+
 popd
 ```
 
-Then, you can continue by deploying what's in the [manager_master](manager_master) folder:
-```BASH
-pushd manager_master
-kubectl apply -f wazuh-manager-master-conf.yaml
-kubectl apply -f wazuh-manager-master-sts-svc.yaml
-kubectl apply -f wazuh-manager-master-sts.yaml
-kubectl apply -f wazuh-api-svc.yaml
-kubectl apply -f wazuh-manager-svc.yaml
-popd
-```
-
-Once the Wazuh master Pod is up and running, you can deploy what's in the [manager_clients](manager_clients) folder:
-```BASH
-pushd manager_clients
-kubectl apply -f wazuh-manager-client-conf.yaml
-kubectl apply -f wazuh-manager-client-sts-svc.yaml
-kubectl apply -f wazuh-manager-client-sts.yaml
-popd
-```
-
-While Wazuh clients are booting, you can deploy the Elasticsearch StatefulSet from the [elasticsearch](elasticsearch) folder:
+Once done, deploy the Elasticsearch StatefulSet from the [elasticsearch](elasticsearch) folder:
 ```BASH
 pushd elasticsearch
+
 kubectl apply -f elasticsearch-sts-svc.yaml
-kubectl apply -f elasticsearch-sts.yaml
 kubectl apply -f elasticsearch-svc.yaml
+
+kubectl apply -f elasticsearch-sts.yaml
+
 popd
 ```
 
 Then, it's preferable you wait for the Elasticsearch Pod to be fully up and initialized before you deploy Kibana. The Kibana Pod will load Wazuh templates in the Elasticsearch installation. You can deploy the Kibana Kubernetes Deployment from the [kibana](kibana) folder:
 ```BASH
 pushd kibana
-kubectl apply -f kibana-deploy.yaml
+
 kubectl apply -f kibana-svc.yaml
-kubectl apply -f nginx-deploy.yaml
 kubectl apply -f nginx-svc.yaml
+
+kubectl apply -f kibana-deploy.yaml
+kubectl apply -f nginx-deploy.yaml
+
 popd
 ```
 
-Finally, you can deploy the Logstash Kubernetes Deployment from the [logstash](logstash) folder after Kibana successfully loaded Wazuh templates in the Elasticsearch installation:
+Deploy the Logstash Kubernetes Deployment from the [logstash](logstash) folder after Kibana successfully loaded Wazuh templates in the Elasticsearch installation:
 ```BASH
 pushd logstash
-kubectl apply -f logstash-deploy.yaml
+
 kubectl apply -f logstash-svc.yaml
+
+kubectl apply -f logstash-deploy.yaml
+
+popd
+```
+
+Then, you can deploy what's in the [manager_cluster](manager_cluster) folder:
+```BASH
+pushd manager_cluster
+
+kubectl apply -f wazuh-api-svc.yaml
+kubectl apply -f wazuh-manager-cluster-sts-svc.yaml
+kubectl apply -f wazuh-manager-svc.yaml
+
+kubectl apply -f wazuh-manager-master-conf.yaml
+kubectl apply -f wazuh-manager-worker-0-conf.yaml
+kubectl apply -f wazuh-manager-worker-1-conf.yaml
+
+kubectl apply -f wazuh-manager-master-sts.yaml
+kubectl apply -f wazuh-manager-worker-0-sts.yaml
+kubectl apply -f wazuh-manager-worker-1-sts.yaml
+
 popd
 ```
 

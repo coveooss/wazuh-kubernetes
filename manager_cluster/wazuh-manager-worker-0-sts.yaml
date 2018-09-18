@@ -1,37 +1,50 @@
 #######################################################################
-# Kubernetes StatefulSet for the Wazuh manager master node
+# Kubernetes StatefulSet for Wazuh manager worker nodes
 #
-# We deploy only one replica here because Wazuh is not yet supporting
-# a multi-master setup
+# We deploy two replicas here and we set a Pod anti-affinity policy to
+# make sure the master and worker pods are not all running on the same
+# Kubernetes node.
 #######################################################################
 
 apiVersion: apps/v1beta2
 kind: StatefulSet
 metadata:
-  name: wazuh-manager-master
+  name: wazuh-manager-worker-0
   namespace: wazuh
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: wazuh-manager
-      wazuh-manager-role: master
-  serviceName: wazuh-master
+      wazuh-manager-role: worker-0
+  serviceName: wazuh-cluster
   podManagementPolicy: Parallel
   template:
     metadata:
       labels:
         app: wazuh-manager
-        wazuh-manager-role: master
-      name: wazuh-manager-master
+        wazuh-manager-role: worker-0
+      name: wazuh-manager-worker-0
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: wazuh-manager-role
+                      operator: In
+                      values:
+                        - master
+                topologyKey: kubernetes.io/hostname
       volumes:
         - name: config
           configMap:
-            name: wazuh-manager-master-conf
+            name: wazuh-manager-worker-0-conf
       containers:
         - name: wazuh-manager
-          image: 'wazuh/wazuh:3.2.0_6.2.1'
+          image: 'wazuh/wazuh:3.6.1_6.4.0'
           resources:
             requests:
               cpu: 500m
@@ -44,9 +57,9 @@ spec:
               mountPath: /wazuh-config-mount/etc/ossec.conf
               subPath: ossec.conf
               readOnly: true
-            - name: wazuh-manager-master
+            - name: wazuh-manager-worker
               mountPath: /var/ossec/data
-            - name: wazuh-manager-master
+            - name: wazuh-manager-worker
               mountPath: /etc/postfix
           ports:
             - containerPort: 1514
@@ -55,7 +68,7 @@ spec:
             - containerPort: 55000
   volumeClaimTemplates:
     - metadata:
-        name: wazuh-manager-master
+        name: wazuh-manager-worker
         namespace: wazuh
       spec:
         accessModes:

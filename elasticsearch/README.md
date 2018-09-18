@@ -7,6 +7,7 @@ Make sure you deployed everything from the [base](../base) folder before deployi
 ## Deploy
 ```BASH
 kubectl apply -f elasticsearch-sts-svc.yaml
-kubectl apply -f elasticsearch-sts.yaml
 kubectl apply -f elasticsearch-svc.yaml
+
+kubectl apply -f elasticsearch-sts.yaml
 ```

@@ -9,11 +9,11 @@ metadata:
   namespace: wazuh
   labels:
     app: wazuh-nginx
-    dns: route53
+    # dns: route53
   annotations:
-    domainName: 'wazuh.some-domain.com'  # TODO: Change this for a Hosted Zone you configured in AWS Route 53
+    # domainName: 'wazuh.some-domain.com'  # TODO: Change this for a Hosted Zone you configured in AWS Route 53
     service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'put_your_aws_acm_certificate_arn_here'
+    # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'put_your_aws_acm_certificate_arn_here'
     service.beta.kubernetes.io/aws-load-balancer-ssl-ports: '443'
     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: ssl
 spec:
@@ -24,3 +24,6 @@ spec:
     - name: web-http
       port: 80
       targetPort: 80
+    - name: web-https
+      port: 443
+      targetPort: 443

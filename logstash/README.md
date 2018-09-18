@@ -6,6 +6,7 @@ Make sure you deployed everything from the [base](../base) folder, the [elastics
 
 ## Deploy
 ```BASH
-kubectl apply -f logstash-deploy.yaml
 kubectl apply -f logstash-svc.yaml
+
+kubectl apply -f logstash-deploy.yaml
 ```

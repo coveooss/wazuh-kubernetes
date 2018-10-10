@@ -8,10 +8,10 @@ metadata:
   name: wazuh-cluster
   namespace: wazuh
   labels:
-    app: wazuh-master
+    app: wazuh-manager
 spec:
   selector:
-    wazuh-manager-role: master
+    app: wazuh-manager
   ports:
     - name: wazuh-clusterd
       port: 1516

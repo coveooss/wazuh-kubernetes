@@ -1,12 +1,14 @@
 #######################################################################
-# Kubernetes StatefulSet for Wazuh manager worker nodes
+# Kubernetes StatefulSet for Wazuh manager worker-1 node
 #
-# We deploy two replicas here and we set a Pod anti-affinity policy to
-# make sure the master and worker pods are not all running on the same
-# Kubernetes node.
+# We have 3 StatefulSet because the Manager configuration requires the
+# node_name to be unique for each cluster member.
+#
+# https://github.com/wazuh/wazuh/issues/1329 will allow us to go back
+# to a single StatefulSet for all workers.
 #######################################################################
 
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: wazuh-manager-worker-1
@@ -16,14 +18,16 @@ spec:
   selector:
     matchLabels:
       app: wazuh-manager
-      wazuh-manager-role: worker-1
+      node-type: worker
+      sts-id: '1'
   serviceName: wazuh-cluster
   podManagementPolicy: Parallel
   template:
     metadata:
       labels:
         app: wazuh-manager
-        wazuh-manager-role: worker-1
+        node-type: worker
+        sts-id: '1'
       name: wazuh-manager-worker-1
     spec:
       affinity:
@@ -33,10 +37,10 @@ spec:
               podAffinityTerm:
                 labelSelector:
                   matchExpressions:
-                    - key: wazuh-manager-role
+                    - key: sts-id
                       operator: In
                       values:
-                        - master
+                        - '0'
                 topologyKey: kubernetes.io/hostname
       volumes:
         - name: config
@@ -63,9 +67,9 @@ spec:
               mountPath: /etc/postfix
           ports:
             - containerPort: 1514
-            - containerPort: 1515
+              name: agents-events
             - containerPort: 1516
-            - containerPort: 55000
+              name: wazuh-clusterd
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-worker

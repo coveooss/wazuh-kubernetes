@@ -8,7 +8,7 @@
 # repository is a nice example!
 #######################################################################
 
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: wazuh-elasticsearch

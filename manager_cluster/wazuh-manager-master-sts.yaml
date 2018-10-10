@@ -5,7 +5,7 @@
 # a multi-master setup
 #######################################################################
 
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: wazuh-manager-master
@@ -15,14 +15,14 @@ spec:
   selector:
     matchLabels:
       app: wazuh-manager
-      wazuh-manager-role: master
+      node-type: master
   serviceName: wazuh-cluster
   podManagementPolicy: Parallel
   template:
     metadata:
       labels:
         app: wazuh-manager
-        wazuh-manager-role: master
+        node-type: master
       name: wazuh-manager-master
     spec:
       volumes:
@@ -49,10 +49,12 @@ spec:
             - name: wazuh-manager-master
               mountPath: /etc/postfix
           ports:
-            - containerPort: 1514
             - containerPort: 1515
+              name: ossec-authd
             - containerPort: 1516
+              name: wazuh-clusterd
             - containerPort: 55000
+              name: wazuh-api
   volumeClaimTemplates:
     - metadata:
         name: wazuh-manager-master

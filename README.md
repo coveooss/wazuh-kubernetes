@@ -71,7 +71,7 @@ pushd manager_cluster
 
 kubectl apply -f wazuh-api-svc.yaml
 kubectl apply -f wazuh-manager-cluster-sts-svc.yaml
-kubectl apply -f wazuh-manager-svc.yaml
+kubectl apply -f wazuh-workers-svc.yaml
 
 kubectl apply -f wazuh-manager-master-conf.yaml
 kubectl apply -f wazuh-manager-worker-0-conf.yaml

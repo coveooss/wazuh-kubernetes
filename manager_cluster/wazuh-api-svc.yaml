@@ -21,8 +21,11 @@ spec:
   type: LoadBalancer
   selector:
     app: wazuh-manager
-    wazuh-manager-role: master
+    node-type: master
   ports:
+    - name: ossec-authd
+      port: 1515
+      targetPort: 1515
     - name: wazuh-api
       port: 55000
       targetPort: 55000

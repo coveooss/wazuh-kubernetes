@@ -2,7 +2,7 @@
 # Kubernetes Deployment for Wazuh Kibana nginx proxy container
 #######################################################################
 
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: wazuh-nginx
